@@ -132,16 +132,14 @@ def read_file(file_path):
     :raises FileNotFoundError: if file does note exist
     """
 
-    whole_text = ""
-
     try:
         with open(file_path, 'rb') as f:
             data_text = f.readlines()
             whole_text = ("".join(data_text))
     except FileNotFoundError as e:
         raise
-
-    return whole_text
+    else:
+        return whole_text
 
 
 def solve(file_path):
