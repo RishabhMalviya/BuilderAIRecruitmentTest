@@ -11,6 +11,7 @@ class TestPathFinder:
         "invalid_coordinate_at_end": "./tests/inputs/invalid_coordinate_at_end.txt",
         "invalid_coordinate_in_middle": "./tests/inputs/invalid_coordinate_in_middle.txt",
     }
+    bad_file_path = "not/a/real/file.txt"
 
     input_strings = {
         "shortest_path_exists": "x0y0,x0y1,x1y1,x3y2,x2y2",
@@ -18,6 +19,7 @@ class TestPathFinder:
         "invalid_coordinate_at_end": "x4y1,x1y2,x5y2,x4y2x5x1",
         "invalid_coordinate_in_middle": "x4y1,x1y2,x5yy,x4y3",
     }
+    bad_input_string = "x0y0,xyy3,445z"
 
     maps = {
         "shortest_path_exists": np.array([
@@ -76,41 +78,56 @@ class TestPathFinder:
         "invalid_coordinate_in_middle": "......\n....S.\n.x..O.\n....E."
     }
 
-    key_values = [
+    keys = [
         "shortest_path_exists",
         "no_shortest_path",
         "invalid_coordinate_at_end",
         "invalid_coordinate_in_middle"
     ]
+    good_keys = [
+        "shortest_path_exists",
+        "invalid_coordinate_at_end",
+        "invalid_coordinate_in_middle"
+    ]
+    bad_key = "no_shortest_path"
 
     # Read File
-    def test_read_file(self):
-        pass
+    @pytest.mark.parametrize('key', keys)
+    def test_read_file(self, key):
+        assert read_file(TestPathFinder.input_files[key]) == TestPathFinder.input_strings[key]
 
     def test_read_file_error(self):
-        pass
+        with pytest.raises(FileNotFoundError):
+            read_file(TestPathFinder.bad_file_path)
 
     # Parse String
-    def test_parse_string_to_map(self):
-        pass
+    @pytest.mark.parametrize('key', keys)
+    def test_parse_string_to_map(self, key):
+        assert (Parser.parse_string_to_map(TestPathFinder.input_strings[key]) == TestPathFinder.maps[key]).all()
 
     def test_parse_string_to_map_error(self):
-        pass
+        with pytest.raises(ShortestPathNotFoundError):
+            Parser.parse_string_to_map(TestPathFinder.bad_input_string)
 
     # Find Shortest Path
-    def test_find_shortest_path(self):
-        pass
+    @pytest.mark.parametrize('key', good_keys)
+    def test_find_shortest_path(self, key):
+        assert (find_shortest_path(TestPathFinder.maps[key]) == TestPathFinder.maps_marked[key]).all()
 
     def test_find_shortest_path_error(self):
-        pass
+        with pytest.raises(ShortestPathNotFoundError):
+            find_shortest_path(TestPathFinder.maps[TestPathFinder.bad_key])
 
     # Print Map
-    def test_print_map_path(self):
-        pass
+    @pytest.mark.parametrize('key', keys)
+    def test_print_map_path(self, key):
+        assert print_map(TestPathFinder.maps_marked[key]) == TestPathFinder.printed_marked_maps[key]
 
     # All At Once
-    def test_solve_path(self):
-        pass
+    @pytest.mark.parametrize('key', good_keys)
+    def test_solve_path(self, key):
+        assert solve(TestPathFinder.input_files[key]) == TestPathFinder.printed_marked_maps[key]
 
     def test_solve_error(self):
-        pass
+        with pytest.raises(ShortestPathNotFoundError):
+            solve(TestPathFinder.input_files[TestPathFinder.bad_key])
