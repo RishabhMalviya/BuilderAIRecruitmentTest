@@ -2,30 +2,113 @@ import numpy as np
 from pathfinder.errors import ShortestPathNotFoundError
 
 
-def parse_string_to_map(coordinates_string):
-    """Parses the contents of the comma-separated string of coordinates. Returns a map of the ocean.
+class Parser:
+    """Encapsulates all utility functions to parse strings/files into maps
 
-    :param coordinates_string: string of comma-separated coordinates encoding the map
-    :type coordinates_string: str
+    ...
 
-    :return: a map of the ocean spanned by starting point (top left) and end point (bottom right)
-    :rtype: numpy.ndarray(dtype='U1')
+    Methods
+    --------
+    parse_string_to_map(coordinates_string):
+        Parses the contents of the comma-separated string of coordinates into a ocean map.
     """
 
+    @staticmethod
+    def __convert_coords_list_to_numpy_array(coords_list):
+        """Converts coordinates list into an ocean map
 
-def parse_file_to_map(file_location):
-    """Parses the contents of the input file. Returns a map of the ocean.
+        :param coords_list:
+        :type coords_list: list [[x1,y1],[x2,y2]...[xn,yn]]
 
-    :param file_location: path (relative to working directory) to input file
-    :type file_location: str
+        :return: ocean map as a numpy array
+        :rtype: numpy.ndarray(dtype='U1')
+        """
+        map_x_size = max([coord[0] for coord in coords_list])
+        map_y_size = max([coord[1] for coord in coords_list])
 
-    :return: a map of the ocean spanned by starting point (top left) and end point (bottom right)
-    :rtype: numpy.ndarray(dtype='U1')
+        ocean_map = np.full((map_x_size, map_y_size), '.', dtype='U1')
+
+        for coord in coords_list[1:-1]:
+            ocean_map[coord[0]][coord[1]] = 'x'
+        ocean_map[coords_list[0][0]][coords_list[0][1]] = 'S'
+        ocean_map[coords_list[-1][0]][coords_list[-1][1]] = 'E'
+
+        return ocean_map
+
+    @staticmethod
+    def __extract_x_y(coord_string):
+        """Parses individual coordinate strings. Returns [x,y] if string is valid, otherwise None
+
+        :param coord_string: a string expected to be of the form `x<number>y<number>`
+        :type coord_string: str
+
+        :return: the `x` and `y` coordinates as a list of size 2
+        :rtype: list [x,y] or None
+        """
+
+        coord = []
+        x = None
+        y = None
+
+        try:
+            x = int(coord_string.split("y")[0].split("x")[1])
+            y = int(coord_string.split("y")[1])
+        except Exception as e:
+            return None
+
+        coord.append(x)
+        coord.append(y)
+
+        return coord
+
+    @staticmethod
+    def parse_string_to_map(coordinates_string):
+        """Parses the contents of the comma-separated string of coordinates into map of the ocean.
+
+        :param coordinates_string: string of comma-separated coordinates encoding the map
+        :type coordinates_string: str
+
+        :return: a map of the ocean spanned by starting point (top left) and end point (bottom right)
+        :rtype: numpy.ndarray(dtype='U1')
+
+        :raises ShortestPathNotFoundError: If there are not enough valid coordinates in the input string
+        """
+
+        coords_list = [
+            Parser.__extract_x_y(coord_string)
+            for coord_string in coordinates_string.split(",")
+        ]
+        coords_list = [coord for coord in coords_list if coord is not None]
+        if len(coords_list) < 2:
+            raise ShortestPathNotFoundError("Not enough valid points in input string to specify Start and End.")
+
+        return Parser.__convert_coords_list_to_numpy_array(coords_list)
+
+
+def print_map(ocean_map):
+    """Parses the input map. Returns a string displaying the map in human-readable format
+
+    :param ocean_map: the map to be printed
+    :type ocean_map: numpy.ndarray(dtype='U1')
+
+    :return: A string representing the map in human readable format
+    :rtype: str
     """
+
+    s = ""
+
+    for y in range(ocean_map.shape[1]):
+        for x in range(ocean_map.shape[0]):
+            s += ocean_map[x][y]
+        s += "\n"
+
+    s.rstrip()
+
+    return s
 
 
 def find_shortest_path(ocean_map):
-    """Finds shortest path from start point to treasure in map. Returns a map with path marked in specified format.
+    """Finds shortest path from start point to end point in map. Returns a map with path marked in specified format.
 
     :param ocean_map: map of the ocean in specified format
     :type ocean_map: numpy.ndarray(dtype='U1')
@@ -35,3 +118,56 @@ def find_shortest_path(ocean_map):
 
     :raises ShortestPathNotFoundError: If shortest path to treasure does not exist
     """
+
+
+def read_file(file_path):
+    """Reads in the file at file_path. Reads all lines from file and returns a single string with no newlines
+
+    :param file_path: the path (relative to the working directory) to input file containing encoded map
+    :type file_path: str
+
+    :return: all lines from file as a single string with no newlines
+    :rtype: str
+
+    :raises FileNotFoundError: if file does note exist
+    """
+
+    whole_text = ""
+
+    try:
+        with open(file_path, 'rb') as f:
+            data_text = f.readlines()
+            whole_text = ("".join(data_text))
+    except FileNotFoundError as e:
+        raise
+
+    return whole_text
+
+
+def solve(file_path):
+    """Takes as input a file containing an encoded map.
+
+    Returns a human-readable string representing the map with the shortest path marked on it.
+
+    :param file_path: the path (relative to the working directory) to input file containing encoded map
+    :type file_path: str
+
+    :return: the map with the shortest path marked in specified format
+    :rtype: str
+
+    :raises ShortestPathNotFoundError: if shortest path to treasure does not exist
+    :raises FileNotFoundError: if no file exists at location specified by file_path
+    """
+
+    try:
+        coordinates_string = read_file(file_path)
+    except FileNotFoundError as e:
+        raise
+    else:
+        try:
+            ocean_map = Parser.parse_string_to_map(coordinates_string)
+            ocean_map_marked = find_shortest_path(ocean_map)
+        except ShortestPathNotFoundError as e:
+            raise
+        else:
+            return print_map(ocean_map_marked)
