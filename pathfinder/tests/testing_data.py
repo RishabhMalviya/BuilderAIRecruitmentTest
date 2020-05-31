@@ -1,4 +1,5 @@
 import numpy as np
+from os import linesep
 
 
 class StaticValues:
@@ -43,6 +44,20 @@ class StaticValues:
         ]).transpose()
     }
 
+    start_positions = {
+        "shortest_path_exists": [0, 0],
+        "no_shortest_path": [0, 0],
+        "invalid_coordinate_at_end": [4, 1],
+        "invalid_coordinate_in_middle": [4, 1]
+    }
+
+    end_positions = {
+        "shortest_path_exists": [2, 2],
+        "no_shortest_path": [2, 2],
+        "invalid_coordinate_at_end": [5, 2],
+        "invalid_coordinate_in_middle": [4, 3]
+    }
+
     maps_marked = {
         "shortest_path_exists": np.array([
             ['S', 'O', 'O', '.'],
@@ -69,10 +84,10 @@ class StaticValues:
     }
 
     printed_marked_maps = {
-        "shortest_path_exists": "SOO.\nxxO.\n..Ex",
-        "no_shortest_path": "S...\nxxx.\n.xEx",
-        "invalid_coordinate_at_end": "......\n....S.\n.x..OE\n......",
-        "invalid_coordinate_in_middle": "......\n....S.\n.x..O.\n....E."
+        "shortest_path_exists": "SOO." + linesep + "xxO." + linesep + "..Ex",
+        "no_shortest_path": "S..." + linesep + "xxx." + linesep + ".xEx",
+        "invalid_coordinate_at_end": "......" + linesep + "....S." + linesep + ".x..OE" + linesep + "......",
+        "invalid_coordinate_in_middle": "......" + linesep + "....S." + linesep + ".x..O." + linesep + "....E."
     }
 
     keys = [
