@@ -1,10 +1,7 @@
-import pytest
 import numpy as np
-from pathfinder.solution import *
-from pathfinder.errors import ShortestPathNotFoundError
 
 
-class TestPathFinder:
+class StaticValues:
     input_files = {
         "shortest_path_exists": "./tests/inputs/shortest_path_exists.txt",
         "no_shortest_path": "./tests/inputs/no_shortest_path.txt",
@@ -90,44 +87,3 @@ class TestPathFinder:
         "invalid_coordinate_in_middle"
     ]
     bad_key = "no_shortest_path"
-
-    # Read File
-    @pytest.mark.parametrize('key', keys)
-    def test_read_file(self, key):
-        assert read_file(TestPathFinder.input_files[key]) == TestPathFinder.input_strings[key]
-
-    def test_read_file_error(self):
-        with pytest.raises(FileNotFoundError):
-            read_file(TestPathFinder.bad_file_path)
-
-    # Parse String
-    @pytest.mark.parametrize('key', keys)
-    def test_parse_string_to_map(self, key):
-        assert (Parser.parse_string_to_map(TestPathFinder.input_strings[key]) == TestPathFinder.maps[key]).all()
-
-    def test_parse_string_to_map_error(self):
-        with pytest.raises(ShortestPathNotFoundError):
-            Parser.parse_string_to_map(TestPathFinder.bad_input_string)
-
-    # Find Shortest Path
-    @pytest.mark.parametrize('key', good_keys)
-    def test_find_shortest_path(self, key):
-        assert (find_shortest_path(TestPathFinder.maps[key]) == TestPathFinder.maps_marked[key]).all()
-
-    def test_find_shortest_path_error(self):
-        with pytest.raises(ShortestPathNotFoundError):
-            find_shortest_path(TestPathFinder.maps[TestPathFinder.bad_key])
-
-    # Print Map
-    @pytest.mark.parametrize('key', keys)
-    def test_print_map_path(self, key):
-        assert print_map(TestPathFinder.maps_marked[key]) == TestPathFinder.printed_marked_maps[key]
-
-    # All At Once
-    @pytest.mark.parametrize('key', good_keys)
-    def test_solve_path(self, key):
-        assert solve(TestPathFinder.input_files[key]) == TestPathFinder.printed_marked_maps[key]
-
-    def test_solve_error(self):
-        with pytest.raises(ShortestPathNotFoundError):
-            solve(TestPathFinder.input_files[TestPathFinder.bad_key])
