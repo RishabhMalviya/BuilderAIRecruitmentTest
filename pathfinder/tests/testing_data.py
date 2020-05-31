@@ -2,7 +2,7 @@ import numpy as np
 from os import linesep
 
 
-class StaticValues:
+class TestingData:
     input_files = {
         "shortest_path_exists": "./tests/inputs/shortest_path_exists.txt",
         "no_shortest_path": "./tests/inputs/no_shortest_path.txt",
@@ -33,14 +33,13 @@ class StaticValues:
         "invalid_coordinate_at_end": np.array([
             ['.', '.', '.', '.', '.', '.'],
             ['.', '.', '.', '.', 'S', '.'],
-            ['.', 'x', '.', '.', '.', 'E'],
-            ['.', '.', '.', '.', '.', '.']
+            ['.', 'x', '.', '.', '.', 'E']
         ]).transpose(),
         "invalid_coordinate_in_middle": np.array([
-            ['.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', 'S', '.'],
-            ['.', 'x', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', 'E', '.']
+            ['.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', 'S'],
+            ['.', 'x', '.', '.', '.'],
+            ['.', '.', '.', '.', 'E']
         ]).transpose()
     }
 
@@ -72,22 +71,21 @@ class StaticValues:
         "invalid_coordinate_at_end": np.array([
             ['.', '.', '.', '.', '.', '.'],
             ['.', '.', '.', '.', 'S', '.'],
-            ['.', 'x', '.', '.', 'O', 'E'],
-            ['.', '.', '.', '.', '.', '.']
+            ['.', 'x', '.', '.', 'O', 'E']
         ]).transpose(),
         "invalid_coordinate_in_middle": np.array([
-            ['.', '.', '.', '.', '.', '.'],
-            ['.', '.', '.', '.', 'S', '.'],
-            ['.', 'x', '.', '.', 'O', '.'],
-            ['.', '.', '.', '.', 'E', '.']
+            ['.', '.', '.', '.', '.'],
+            ['.', '.', '.', '.', 'S'],
+            ['.', 'x', '.', '.', 'O'],
+            ['.', '.', '.', '.', 'E']
         ]).transpose()
     }
 
     printed_marked_maps = {
         "shortest_path_exists": "SOO." + linesep + "xxO." + linesep + "..Ex",
         "no_shortest_path": "S..." + linesep + "xxx." + linesep + ".xEx",
-        "invalid_coordinate_at_end": "......" + linesep + "....S." + linesep + ".x..OE" + linesep + "......",
-        "invalid_coordinate_in_middle": "......" + linesep + "....S." + linesep + ".x..O." + linesep + "....E."
+        "invalid_coordinate_at_end": "......" + linesep + "....S." + linesep + ".x..OE",
+        "invalid_coordinate_in_middle": "....." + linesep + "....S" + linesep + ".x..O" + linesep + "....E"
     }
 
     keys = [

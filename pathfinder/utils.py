@@ -1,5 +1,5 @@
 import numpy as np
-
+from os import linesep
 
 def read_file(file_path):
     """Reads in the file at file_path. Reads all lines from file and returns a single string with no newlines
@@ -14,8 +14,9 @@ def read_file(file_path):
     """
 
     try:
-        with open(file_path, 'rb') as f:
+        with open(file_path, 'r') as f:
             data_text = f.readlines()
+            data_text = [text.rstrip() for text in data_text]
             whole_text = ("".join(data_text))
     except FileNotFoundError as e:
         raise
@@ -38,8 +39,8 @@ def print_map(ocean_map):
     for y in range(ocean_map.shape[1]):
         for x in range(ocean_map.shape[0]):
             s += ocean_map[x][y]
-        s += "\n"
+        s += linesep
 
-    s.rstrip()
+    s = s.rstrip()
 
     return s

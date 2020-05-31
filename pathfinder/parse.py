@@ -3,14 +3,14 @@ from pathfinder.errors import ShortestPathNotFoundError
 
 
 class Parser:
-    """Encapsulates all utility functions to parse strings/files into maps
+    """Encapsulates all steps for parsing input strings into maps
 
     ...
 
     Methods
     --------
-    parse_string_to_map(coordinates_string):
-        Parses the contents of the comma-separated string of coordinates into a ocean map.
+        parse_string_to_map(coordinates_string):
+            parses the contents of the comma-separated string of coordinates into a ocean map.
     """
 
     @staticmethod
@@ -23,8 +23,8 @@ class Parser:
         :return: ocean map as a numpy array
         :rtype: numpy.ndarray(dtype='U1')
         """
-        map_x_size = max([coord[0] for coord in coords_list])
-        map_y_size = max([coord[1] for coord in coords_list])
+        map_x_size = max([coord[0] for coord in coords_list]) + 1
+        map_y_size = max([coord[1] for coord in coords_list]) + 1
 
         ocean_map = np.full((map_x_size, map_y_size), '.', dtype='U1')
 
@@ -68,8 +68,8 @@ class Parser:
         :param coordinates_string: string of comma-separated coordinates encoding the map
         :type coordinates_string: str
 
-        :return: a map of the ocean spanned by starting point (top left) and end point (bottom right)
-        :rtype: numpy.ndarray(dtype='U1')
+        :return: a map of the ocean, start position, end position
+        :rtype: numpy.ndarray(dtype='U1'), list [x_start, y_start], list [x_end, y_end]
 
         :raises ShortestPathNotFoundError: If there are not enough valid coordinates in the input string
         """
@@ -82,4 +82,7 @@ class Parser:
         if len(coords_list) < 2:
             raise ShortestPathNotFoundError("Not enough valid points in input string to specify Start and End.")
 
-        return Parser.__convert_coords_list_to_numpy_array(coords_list)
+        return Parser.__convert_coords_list_to_numpy_array(coords_list), coords_list[0], coords_list[-1]
+
+# if __name__ == "__main__":
+#     Parser.parse_string_to_map("x0y0,x0y1,x1y1,x3y2,x2y2")
