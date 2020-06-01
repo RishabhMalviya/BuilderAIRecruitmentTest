@@ -1,5 +1,5 @@
 from flask import Flask
-from pathfinder.solve import solve
+from pathfinder import solve
 from pathfinder.errors import ShortestPathNotFoundError
 from os import linesep
 app = Flask(__name__)

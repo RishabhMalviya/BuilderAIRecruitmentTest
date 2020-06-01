@@ -1,5 +1,5 @@
-import numpy as np
 from os import linesep
+
 
 def read_file(file_path):
     """Reads in the file at file_path. Reads all lines from file and returns a single string with no newlines

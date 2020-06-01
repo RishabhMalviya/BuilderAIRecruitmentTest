@@ -4,7 +4,7 @@ from pathfinder.errors import ShortestPathNotFoundError
 from pathfinder.utils import read_file, print_map
 
 
-class ShortestPathFinder:
+class BreadthFirstSearch:
     """Encapsulates all steps for marking shortest path on maps
 
     ...
@@ -42,9 +42,9 @@ class ShortestPathFinder:
 
         neighbours = []
 
-        for i in range(len(ShortestPathFinder.x_change)):
-            new_x = curr_x + ShortestPathFinder.x_change[i]
-            new_y = curr_y + ShortestPathFinder.y_change[i]
+        for i in range(len(BreadthFirstSearch.x_change)):
+            new_x = curr_x + BreadthFirstSearch.x_change[i]
+            new_y = curr_y + BreadthFirstSearch.y_change[i]
 
             if 0 <= new_x < self.x_max and 0 <= new_y < self.y_max:
                 if not self.visited_cells[new_x][new_y] and not self.ocean_map[new_x][new_y] == 'x':
@@ -93,36 +93,3 @@ class ShortestPathFinder:
         else:
             self.__mark_shortest_path()
             return self.ocean_map
-
-
-def solve(file_path):
-    """Takes as input a file containing an encoded map.
-
-    Returns a human-readable string representing the map with the shortest path marked on it.
-
-    :param file_path: the path (relative to the working directory) to input file containing encoded map
-    :type file_path: str
-
-    :return: the map with the shortest path marked in specified format
-    :rtype: str
-
-    :raises ShortestPathNotFoundError: if shortest path to treasure does not exist
-    :raises FileNotFoundError: if no file exists at location specified by file_path
-    """
-
-    try:
-        coordinates_string = read_file(file_path)
-    except FileNotFoundError as e:
-        raise
-    else:
-        try:
-            ocean_map, S, E = Parser.parse_string_to_map(coordinates_string)
-            ocean_map_marked = ShortestPathFinder(ocean_map, S, E).find_shortest_path()
-        except ShortestPathNotFoundError as e:
-            raise
-        else:
-            return print_map(ocean_map_marked)
-
-
-if __name__ == "__main__":
-    solve('./tests/inputs/invalid_coordinate_at_end.txt')
